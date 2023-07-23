@@ -1,0 +1,6 @@
+output*/
+*.session*
+config.ini
+__*__
+.vscode
+.venv
