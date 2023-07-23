@@ -1,7 +1,6 @@
-import datetime
-from sqlite3 import Connection
 from fastapi import Depends, FastAPI, HTTPException
 from sqlalchemy.orm import Session
+import uvicorn
 
 from . import crud, models, schemas
 from .database import SessionLocal, engine
