@@ -177,6 +177,13 @@ def delete_connection(db: Session, id_origin: int, id_destination: int):
     db.commit()
     return schemas.Success(ok=True)
 
+def delete_connections(db: Session, id_origin: int):
+    db.query(models.TelegramConnection).filter(
+        models.TelegramConnection.id_origin == id_origin,
+    ).delete()
+    db.commit()
+    return schemas.Success(ok=True)
+
 
 def get_last_in_queue(db: Session):
     return (

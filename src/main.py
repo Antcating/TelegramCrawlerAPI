@@ -258,6 +258,19 @@ def delete_connection(id_origin: int, id_destination: int, db: Session = Depends
     """
     return crud.delete_connection(db, id_origin, id_destination)
 
+@app.delete("/connections/", response_model=schemas.Success)
+def delete_connections(channel_id: int, db: Session = Depends(get_db)):
+    """Deletes all connections from proveded channel from DB (both before and after)
+
+    Args:
+        channel_id (int): ID of channel from which connections are going
+        db (Session, optional): SQLAlchemy Session. Defaults to Depends(get_db).
+
+    Returns:
+        schemas.Deletion: returns ok status using pydantic schema
+    """
+    return crud.delete_connections(db, channel_id)
+
 @app.delete("/channel/", response_model=schemas.Success)
 def delete_channel(channel_id: int, db: Session = Depends(get_db)):
     """Deletes channel
