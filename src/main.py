@@ -183,6 +183,20 @@ def create_connection(connection: schemas.ConnectionCreate, db: Session = Depend
 
 @app.patch("/connection/", response_model=schemas.Success)
 def update_connection(id_origin: int, id_destination: int, date: str, db: Session = Depends(get_db)):
+    """Updates strength of the conenction
+
+    Args:
+        id_origin (int): ID of channel from which connections are going
+        id_destination (int): ID of channel to which connections are going
+        date (str): Datetime in isofortmat converted to string 
+        db (Session, optional): SQLAlchemy Session. Defaults to Depends(get_db).
+
+    Raises:
+        HTTPException: Returns 404 if given conenction doesn't exists 
+
+    Returns:
+        schemas.Success: Returns Ok status
+    """
     db_connection = crud.update_connection(db, id_origin, id_destination, date)
     if not db_connection:
         raise HTTPException(status_code=404, detail='No connection between provided channels')
@@ -190,6 +204,20 @@ def update_connection(id_origin: int, id_destination: int, date: str, db: Sessio
 
 @app.get('/connection/', response_model=schemas.Connection)
 def get_connection(id_origin: int, id_destination: int, type: int, db: Session = Depends(get_db)):
+    """Returns connection using supplied type (0=before, 1=after)
+
+    Args:
+        id_origin (int): ID of channel from which connections are going
+        id_destination (int): ID of channel to which connections are going
+        type (int): type (0=before, 1=after)
+        db (Session, optional): SQLAlchemy Session. Defaults to Depends(get_db).
+
+    Raises:
+        HTTPException: returns status_code 404 if connection not found
+
+    Returns:
+        schema.Connection : returns Connection
+    """
     db_connection = crud.get_connection(db, id_origin, id_destination, type)
     if not db_connection:
         raise HTTPException(status_code=404, detail='No connection between provided channels')
@@ -197,6 +225,20 @@ def get_connection(id_origin: int, id_destination: int, type: int, db: Session =
 
 @app.get('/connection_by_date/', response_model=schemas.Connection)
 def get_connection_by_date(id_origin: int, id_destination: int, date: str, db: Session = Depends(get_db)):
+    """Returns connection using supplied date (technicaly before/after)
+
+    Args:
+        id_origin (int): ID of channel from which connections are going
+        id_destination (int): ID of channel to which connections are going
+        date (str): Datetime in isofortmat converted to string 
+        db (Session, optional): SQLAlchemy Session. Defaults to Depends(get_db).
+
+    Raises:
+        HTTPException: returns status_code=404 if connection not found
+
+    Returns:
+        schema.Connection : returns Connection
+    """
     db_connection = crud.get_connection_by_date(db, id_origin, id_destination, date)
     if not db_connection:
         raise HTTPException(status_code=404, detail='No connection between provided channels')
@@ -240,6 +282,17 @@ def delete_channel(channel_id: int, db: Session = Depends(get_db)):
 
 @app.get('/queue/', response_model=schemas.Queue)
 def get_last_in_queue(db: Session = Depends(get_db)):
+    """Return last channel in queue by date 
+
+    Args:
+        db (Session, optional): SQLAlchemy Session. Defaults to Depends(get_db).
+
+    Raises:
+        HTTPException: Return status_code 404 if no channels found in queue
+
+    Returns:
+        schemas.Queue: returns Queue object
+    """
     db_queue = crud.get_last_in_queue(db)
     if not db_queue:
         raise HTTPException(status_code=404, detail='No channels in queue')
@@ -247,6 +300,18 @@ def get_last_in_queue(db: Session = Depends(get_db)):
 
 @app.post('/queue/', response_model=schemas.Queue)
 def add_to_queue(queue_element: schemas.QueueCreate, db: Session = Depends(get_db)):
+    """Creates new queue element with provided ID
+
+    Args:
+        queue_element (schemas.QueueCreate): provided by schema.QueueCreate object
+        db (Session, optional): SQLAlchemy Session. Defaults to Depends(get_db).
+
+    Raises:
+        HTTPException: Return status_code 403 if channel is already in the queue
+
+    Returns:
+        schemas.Queue: Return created Queue object
+    """
     db_queue = crud.add_to_queue(db, queue_element)
     if db_queue is None:
         raise HTTPException(status_code=403, detail='This channel is already in the queue!')
@@ -254,6 +319,18 @@ def add_to_queue(queue_element: schemas.QueueCreate, db: Session = Depends(get_d
 
 @app.delete('/queue/', response_model=schemas.Success)
 def delete_from_queue(channel_id: int, db: Session = Depends(get_db)):
+    """Deletes queue element with provided ID
+
+    Args:
+        channel_id (int): ID of channel to delete from queue
+        db (Session, optional): SQLAlchemy Session. Defaults to Depends(get_db).
+
+    Raises:
+        HTTPException: Return status_code 404 if there is no channel with provided ID in queue
+
+    Returns:
+        schemas.Success: Return OK status
+    """
     db_status = crud.delete_from_queue(db, channel_id)
     if db_status is None:
         raise HTTPException(status_code=404, detail='There is no channel with provided ID in queue')
