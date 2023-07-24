@@ -11,13 +11,15 @@ class Channel(BaseModel):
     # def date_validate(cls, date):
     #     return datetime.datetime.fro
     
-class Connection(BaseModel):
+class ConnectionBase(BaseModel):
     id_origin: int
     id_destination: int
     strength: int
+
+class Connection(ConnectionBase):
     type: int = 1
 
-class ConnectionCreate(Connection):
+class ConnectionCreate(ConnectionBase):
     date: datetime.datetime
 
 class Queue(BaseModel):

@@ -1,8 +1,9 @@
+import datetime
 from sqlalchemy.orm import Session
 
-from . import schemas
-from . import models
-from .constants import DATE_BREAK
+import schemas
+import models
+from constants import DATE_BREAK
 
 
 def get_channel_by_id(db: Session, channel_id: int):
@@ -100,7 +101,13 @@ def create_connection(db: Session, connection: schemas.ConnectionCreate):
     return db_connection
 
 
-def update_connection(db: Session, id_origin: int, id_destination: int, type: int):
+def update_connection(db: Session, id_origin: int, id_destination: int, date: str):
+    date = datetime.datetime.fromisoformat(date)
+    if date < DATE_BREAK:
+        type = 0
+    elif date >= DATE_BREAK:
+        type = 1
+    
     db_connection = get_connection(db, id_origin, id_destination, type)
     if db_connection is None:
         return None
@@ -115,6 +122,22 @@ def update_connection(db: Session, id_origin: int, id_destination: int, type: in
     return schemas.Success(ok=True)
 
 def get_connection(db: Session, id_origin: int, id_destination: int, type: int):
+    return (
+        db.query(models.TelegramConnection)
+        .filter(
+            models.TelegramConnection.id_origin == id_origin,
+            models.TelegramConnection.id_destination == id_destination,
+            models.TelegramConnection.type == type,
+        )
+        .first()
+    )
+
+def get_connection_by_date(db: Session, id_origin: int, id_destination: int, date: str):
+    date = datetime.datetime.fromisoformat(date)
+    if date < DATE_BREAK:
+        type = 0
+    elif date >= DATE_BREAK:
+        type = 1
     return (
         db.query(models.TelegramConnection)
         .filter(
