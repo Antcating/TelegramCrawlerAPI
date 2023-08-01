@@ -56,7 +56,7 @@ You can check it using by going to `0.0.0.0:8000` in your browser. It has to ret
 
 ## 📖 Configs <a name="configs"></a>
 
-There are several places where you can change some configs of the project. In `docker-compose.yml` you can change your Postgres username (POSTGRES_USER), password (POSTGRES_PASSWORD) and name of the database (POSTGRES_DB). **If you change any of this rows, you have to update `config.ini` file with updated data using the pattern shown in comment**
+There are several places where you can change some configs of the project. In `docker-compose.yml` you can change your Postgres username (POSTGRES_USER), password (POSTGRES_PASSWORD) and name of the database (POSTGRES_DB). **If you change any of this rows, you have to update `config.ini` file with updated data using the pattern shown in `config.ini` file**
 
 ## ⛏️ Built Using <a name = "built_using"></a>
 
