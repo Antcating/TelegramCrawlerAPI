@@ -26,7 +26,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-Project is built using PostgresQL and FastAPI. There is a Docker container for both of them, so you don't have to setup everything yourself. The only thing, that is needed is [Docker Desktop](https://www.docker.com/products/docker-desktop/) running locally on your machine or install Docker Engine and docker-compose individualy. 
+Project is built using PostgresQL and FastAPI. There is a Docker container for both of them, so you don't have to setup everything yourself. The only thing, that is needed is [Docker Desktop](https://www.docker.com/products/docker-desktop/) running locally on your machine or install Docker Engine and docker-compose individually. 
 
 
 ### Installing
@@ -48,7 +48,7 @@ And run docker-compose to start up the project:
 docker-compose up
 ```
 
-## 🎈 Usage <a name="usage"></a>
+## ⭐ Usage <a name="usage"></a>
 
 The container will start with API running locally on `0.0.0.0:8000`. 
 
