@@ -10,8 +10,8 @@
 
 - [About](#about)
 - [Getting Started](#getting_started)
-- [Deployment](#deployment)
 - [Usage](#usage)
+- [Configs](#configs)
 - [Built Using](#built_using)
 - [Authors](#authors)
 
@@ -26,7 +26,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-Project is built using PostgresQL and FastAPI. There is a Docker container for both of them, so you don't have to setup everything yourself. The only thing, that is needed is [Docker Desktop](https://www.docker.com/products/docker-desktop/) running locally on your machine or install Docker Engine and docker-compose individually. 
+Project is built using PostgresQL and FastAPI. There is a Docker container for both of them, so you don't have to setup everything yourself. In particular, for this project we will need docker-compose. You can install full [Docker Desktop](https://www.docker.com/products/docker-desktop/) bundle with docker-compose already built into it or install Docker Engine and docker-compose individually. 
 
 
 ### Installing
@@ -53,6 +53,10 @@ docker-compose up
 The container will start with API running locally on `0.0.0.0:8000`. 
 
 You can check it using by going to `0.0.0.0:8000` in your browser. It has to return JSON with Ok row set to true. All possible API calls with descriptions could be seen on the `0.0.0.0:8000/docs`. You can try manually adding new channels or connections and see the response from database.
+
+## 📖 Configs <a name="configs"></a>
+
+There are several places where you can change some configs of the project. In `docker-compose.yml` you can change your Postgres username (POSTGRES_USER), password (POSTGRES_PASSWORD) and name of the database (POSTGRES_DB). **If you change any of this rows, you have to update `config.ini` file with updated data using the pattern shown in comment**
 
 ## ⛏️ Built Using <a name = "built_using"></a>
 
