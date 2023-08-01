@@ -1,9 +1,9 @@
 import datetime
 from sqlalchemy.orm import Session
 
-import schemas
-import models
-from constants import DATE_BREAK
+from . import schemas
+from . import models
+from .constants import DATE_BREAK
 
 
 def get_channel_by_id(db: Session, channel_id: int):

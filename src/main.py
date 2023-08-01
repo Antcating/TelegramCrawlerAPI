@@ -1,10 +1,9 @@
 from fastapi import Depends, FastAPI, HTTPException
 from sqlalchemy.orm import Session
-import uvicorn
 import configparser
 
-import crud, models, schemas
-from database import SessionLocal, engine
+from . import crud, models, schemas
+from .database import SessionLocal, engine
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -26,6 +25,10 @@ def get_db():
     finally:
         db.close()
 
+
+@app.get("/", response_model=schemas.Success)
+def base_return():
+    return schemas.Success(ok=True)
 
 @app.get("/channel_by_id/{channel_id}/", response_model=schemas.Channel)
 def get_channel_by_id(channel_id: int, db: Session = Depends(get_db)):
@@ -348,6 +351,3 @@ def delete_from_queue(channel_id: int, db: Session = Depends(get_db)):
     if db_status is None:
         raise HTTPException(status_code=404, detail='There is no channel with provided ID in queue')
     return db_status
-
-if __name__ == "__main__":
-    uvicorn.run(app="main:app", host=API_HOST, port=int(API_PORT))
