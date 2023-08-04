@@ -8,9 +8,6 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=root
       - POSTGRES_DB=Telegram
-    volumes:
-      - ./db.sql:/docker-entrypoint-initdb.d/db.sql
-      - ./postgres-data:/var/lib/postgresql/data:rw
     ports:
       - 5432:5432
   telegramcrawlerapi:
@@ -20,11 +17,9 @@ services:
       context: .
       dockerfile: ./Dockerfile
     ports:
-      - 8000:8000
+      - 127.0.0.1:8000:8000
     depends_on:
       - db
     stdin_open: true
-volumes:
-  postgres-data:
 
 
