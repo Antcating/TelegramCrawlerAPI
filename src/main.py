@@ -14,8 +14,6 @@ config.sections()
 
 config.read("config.ini")
 
-API_HOST = config["API"]["API_HOST"]
-API_PORT = config["API"]["API_PORT"]
 
 # Dependency
 def get_db():
@@ -29,6 +27,7 @@ def get_db():
 @app.get("/", response_model=schemas.Success)
 def base_return():
     return schemas.Success(ok=True)
+
 
 @app.get("/channel_by_id/{channel_id}/", response_model=schemas.Channel)
 def get_channel_by_id(channel_id: int, db: Session = Depends(get_db)):
@@ -46,6 +45,7 @@ def get_channel_by_id(channel_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="No channel was found")
     return db_channel
 
+
 @app.get("/channel_by_username/{channel_username}/", response_model=schemas.Channel)
 def get_channel_by_username(channel_username: str, db: Session = Depends(get_db)):
     """Returns channel with given username (using ilike query)
@@ -62,14 +62,19 @@ def get_channel_by_username(channel_username: str, db: Session = Depends(get_db)
         raise HTTPException(status_code=404, detail="No channel was found")
     return db_channel
 
-@app.get("/channels_by_username/{channel_username}/", response_model=list[schemas.Channel])
-def get_channels_by_username(channel_username: str, db: Session = Depends(get_db), limit: int = 3):
+
+@app.get(
+    "/channels_by_username/{channel_username}/", response_model=list[schemas.Channel]
+)
+def get_channels_by_username(
+    channel_username: str, db: Session = Depends(get_db), limit: int = 3
+):
     """Returns list of channels with similar to given username (using ilike query)
 
     Args:
         db (Session): SQLAlchemy Session
         channel_username (str): Channel username
-        limis: (int): Limits number of channels in output
+        limit: (int): Limits number of channels in output
 
     Returns:
         list(models.TelegramChannel): Returns list of channels from query result
@@ -78,6 +83,7 @@ def get_channels_by_username(channel_username: str, db: Session = Depends(get_db
     if db_channels is None:
         raise HTTPException(status_code=404, detail="No channel was found")
     return db_channels
+
 
 @app.get("/channel_by_title/{channel_title}/", response_model=schemas.Channel)
 def get_channel_by_title(channel_title: str, db: Session = Depends(get_db)):
@@ -95,14 +101,17 @@ def get_channel_by_title(channel_title: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="No channel was found")
     return db_channel
 
+
 @app.get("/channels_by_title/{channel_title}/", response_model=list[schemas.Channel])
-def get_channels_by_title(channel_title: str, db: Session = Depends(get_db), limit: int = 3):
+def get_channels_by_title(
+    channel_title: str, db: Session = Depends(get_db), limit: int = 3
+):
     """Returns list of channels with similar to given title (using ilike query)
 
     Args:
         db (Session): SQLAlchemy Session
         channel_username (str): Channel username
-        limis: (int): Limits number of channels in output
+        limit: (int): Limits number of channels in output
 
     Returns:
         list(models.TelegramChannel): Returns list of channels from query result
@@ -112,9 +121,15 @@ def get_channels_by_title(channel_title: str, db: Session = Depends(get_db), lim
         raise HTTPException(status_code=404, detail="No channel was found")
     return db_channels
 
-@app.get("/channel_connections_in/{channel_id}/{type}", response_model=list[schemas.Connection])
-def get_channel_connections_in(channel_id: int, type: int, db: Session = Depends(get_db)):
-    """Returns list of Connections going in 
+
+@app.get(
+    "/channel_connections_in/{channel_id}/{type}",
+    response_model=list[schemas.Connection],
+)
+def get_channel_connections_in(
+    channel_id: int, type: int, db: Session = Depends(get_db)
+):
+    """Returns list of Connections going in
         after the split from channel provided by id
 
     Args:
@@ -129,9 +144,15 @@ def get_channel_connections_in(channel_id: int, type: int, db: Session = Depends
         raise HTTPException(status_code=404, detail="No connections was found")
     return db_connections
 
-@app.get("/channel_connections_out/{channel_id}/{type}", response_model=list[schemas.Connection])
-def get_channel_connections_out(channel_id: int, type: int, db: Session = Depends(get_db)):
-    """Returns list of Connections going out 
+
+@app.get(
+    "/channel_connections_out/{channel_id}/{type}",
+    response_model=list[schemas.Connection],
+)
+def get_channel_connections_out(
+    channel_id: int, type: int, db: Session = Depends(get_db)
+):
+    """Returns list of Connections going out
         before the split from channel provided by id
 
     Args:
@@ -146,6 +167,7 @@ def get_channel_connections_out(channel_id: int, type: int, db: Session = Depend
         raise HTTPException(status_code=404, detail="No connections was found")
     return db_connections
 
+
 @app.post("/channel/", response_model=schemas.Channel)
 def create_channel(channel: schemas.Channel, db: Session = Depends(get_db)):
     """Creates channel in DB
@@ -155,58 +177,71 @@ def create_channel(channel: schemas.Channel, db: Session = Depends(get_db)):
         db (Session, optional): SQLAlchemy Session. Defaults to Depends(get_db).
 
     Raises:
-        HTTPException: Returns status_code 400 if channel already exists 
+        HTTPException: Returns status_code 400 if channel already exists
 
     Returns:
         schemas.Channel: Returns created channel
     """
     db_channel = crud.get_channel_by_id(db, channel.id)
     if db_channel:
-        raise HTTPException(status_code=400, detail='Channel already exists')
+        raise HTTPException(status_code=400, detail="Channel already exists")
     return crud.create_channel(db, channel)
 
+
 @app.post("/connection/", response_model=schemas.Connection)
-def create_connection(connection: schemas.ConnectionCreate, db: Session = Depends(get_db)):
-    """Creates conection using IDs of the channels
+def create_connection(
+    connection: schemas.ConnectionCreate, db: Session = Depends(get_db)
+):
+    """Creates connection using IDs of the channels
 
     Args:
         connection (schemas.ConnectionCreate): Connection object from pydantic
         db (Session, optional): SQLAlchemy Session. Defaults to Depends(get_db).
 
     Raises:
-        HTTPException: returns status_code 403 if one of channel IDs doesn't exists in DB 
+        HTTPException: returns status_code 403 if one of channel IDs doesn't exists in DB
 
     Returns:
         schemas.Connection: Created Connection object from pydantic
     """
     db_connection = crud.create_connection(db, connection)
     if not db_connection:
-        raise HTTPException(status_code=403, detail='At least one of the channels doesn`t exist')
+        raise HTTPException(
+            status_code=403, detail="At least one of the channels doesn`t exist"
+        )
     return db_connection
 
+
 @app.patch("/connection/", response_model=schemas.Success)
-def update_connection(id_origin: int, id_destination: int, date: str, db: Session = Depends(get_db)):
-    """Updates strength of the conenction
+def update_connection(
+    id_origin: int, id_destination: int, date: str, db: Session = Depends(get_db)
+):
+    """Updates strength of the connection
 
     Args:
         id_origin (int): ID of channel from which connections are going
         id_destination (int): ID of channel to which connections are going
-        date (str): Datetime in isofortmat converted to string 
+        date (str): Datetime in isoformat converted to string
         db (Session, optional): SQLAlchemy Session. Defaults to Depends(get_db).
 
     Raises:
-        HTTPException: Returns 404 if given conenction doesn't exists 
+        HTTPException: Returns 404 if given connection doesn't exists
 
     Returns:
         schemas.Success: Returns Ok status
     """
     db_connection = crud.update_connection(db, id_origin, id_destination, date)
     if not db_connection:
-        raise HTTPException(status_code=404, detail='No connection between provided channels')
+        raise HTTPException(
+            status_code=404, detail="No connection between provided channels"
+        )
     return db_connection
 
-@app.get('/connection/', response_model=schemas.Connection)
-def get_connection(id_origin: int, id_destination: int, type: int, db: Session = Depends(get_db)):
+
+@app.get("/connection/", response_model=schemas.Connection)
+def get_connection(
+    id_origin: int, id_destination: int, type: int, db: Session = Depends(get_db)
+):
     """Returns connection using supplied type (0=before, 1=after)
 
     Args:
@@ -223,17 +258,22 @@ def get_connection(id_origin: int, id_destination: int, type: int, db: Session =
     """
     db_connection = crud.get_connection(db, id_origin, id_destination, type)
     if not db_connection:
-        raise HTTPException(status_code=404, detail='No connection between provided channels')
+        raise HTTPException(
+            status_code=404, detail="No connection between provided channels"
+        )
     return db_connection
 
-@app.get('/connection_by_date/', response_model=schemas.Connection)
-def get_connection_by_date(id_origin: int, id_destination: int, date: str, db: Session = Depends(get_db)):
-    """Returns connection using supplied date (technicaly before/after)
+
+@app.get("/connection_by_date/", response_model=schemas.Connection)
+def get_connection_by_date(
+    id_origin: int, id_destination: int, date: str, db: Session = Depends(get_db)
+):
+    """Returns connection using supplied date (technically before/after)
 
     Args:
         id_origin (int): ID of channel from which connections are going
         id_destination (int): ID of channel to which connections are going
-        date (str): Datetime in isofortmat converted to string 
+        date (str): Datetime in isoformat converted to string
         db (Session, optional): SQLAlchemy Session. Defaults to Depends(get_db).
 
     Raises:
@@ -244,11 +284,16 @@ def get_connection_by_date(id_origin: int, id_destination: int, date: str, db: S
     """
     db_connection = crud.get_connection_by_date(db, id_origin, id_destination, date)
     if not db_connection:
-        raise HTTPException(status_code=404, detail='No connection between provided channels')
+        raise HTTPException(
+            status_code=404, detail="No connection between provided channels"
+        )
     return db_connection
 
+
 @app.delete("/connection/", response_model=schemas.Success)
-def delete_connection(id_origin: int, id_destination: int, db: Session = Depends(get_db)):
+def delete_connection(
+    id_origin: int, id_destination: int, db: Session = Depends(get_db)
+):
     """Deletes connection from DB (both before and after)
 
     Args:
@@ -261,9 +306,10 @@ def delete_connection(id_origin: int, id_destination: int, db: Session = Depends
     """
     return crud.delete_connection(db, id_origin, id_destination)
 
+
 @app.delete("/connections/", response_model=schemas.Success)
 def delete_connections(channel_id: int, db: Session = Depends(get_db)):
-    """Deletes all connections from proveded channel from DB (both before and after)
+    """Deletes all connections from provided channel from DB (both before and after)
 
     Args:
         channel_id (int): ID of channel from which connections are going
@@ -273,6 +319,7 @@ def delete_connections(channel_id: int, db: Session = Depends(get_db)):
         schemas.Deletion: returns ok status using pydantic schema
     """
     return crud.delete_connections(db, channel_id)
+
 
 @app.delete("/channel/", response_model=schemas.Success)
 def delete_channel(channel_id: int, db: Session = Depends(get_db)):
@@ -291,14 +338,19 @@ def delete_channel(channel_id: int, db: Session = Depends(get_db)):
     """
     db_status = crud.get_channel_by_id(db, channel_id)
     if not db_status:
-        raise HTTPException(status_code=404, detail='Channel with this ID does not exist')
-    if db_status == 'Connection':
-        raise HTTPException(status_code=403, detail='Channel with this ID has existing connections')
+        raise HTTPException(
+            status_code=404, detail="Channel with this ID does not exist"
+        )
+    if db_status == "Connection":
+        raise HTTPException(
+            status_code=403, detail="Channel with this ID has existing connections"
+        )
     return crud.delete_channel(db, channel_id)
 
-@app.get('/queue/', response_model=schemas.Queue)
+
+@app.get("/queue/", response_model=schemas.Queue)
 def get_last_in_queue(db: Session = Depends(get_db)):
-    """Return last channel in queue by date 
+    """Return last channel in queue by date
 
     Args:
         db (Session, optional): SQLAlchemy Session. Defaults to Depends(get_db).
@@ -311,10 +363,11 @@ def get_last_in_queue(db: Session = Depends(get_db)):
     """
     db_queue = crud.get_last_in_queue(db)
     if not db_queue:
-        raise HTTPException(status_code=404, detail='No channels in queue')
+        raise HTTPException(status_code=404, detail="No channels in queue")
     return db_queue
 
-@app.post('/queue/', response_model=schemas.Queue)
+
+@app.post("/queue/", response_model=schemas.Queue)
 def add_to_queue(queue_element: schemas.QueueCreate, db: Session = Depends(get_db)):
     """Creates new queue element with provided ID
 
@@ -330,10 +383,13 @@ def add_to_queue(queue_element: schemas.QueueCreate, db: Session = Depends(get_d
     """
     db_queue = crud.add_to_queue(db, queue_element)
     if db_queue is None:
-        raise HTTPException(status_code=403, detail='This channel is already in the queue!')
+        raise HTTPException(
+            status_code=403, detail="This channel is already in the queue!"
+        )
     return db_queue
 
-@app.delete('/queue/', response_model=schemas.Success)
+
+@app.delete("/queue/", response_model=schemas.Success)
 def delete_from_queue(channel_id: int, db: Session = Depends(get_db)):
     """Deletes queue element with provided ID
 
@@ -349,5 +405,7 @@ def delete_from_queue(channel_id: int, db: Session = Depends(get_db)):
     """
     db_status = crud.delete_from_queue(db, channel_id)
     if db_status is None:
-        raise HTTPException(status_code=404, detail='There is no channel with provided ID in queue')
+        raise HTTPException(
+            status_code=404, detail="There is no channel with provided ID in queue"
+        )
     return db_status
