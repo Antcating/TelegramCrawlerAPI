@@ -50,9 +50,9 @@ docker-compose up
 
 ## ⭐ Usage <a name="usage"></a>
 
-The container will start with API running locally on `0.0.0.0:8000`. 
+The container will start with API running locally on `127.0.0.1:8000`. 
 
-You can check it using by going to `0.0.0.0:8000` in your browser. It has to return JSON with Ok row set to true. All possible API calls with descriptions could be seen on the `0.0.0.0:8000/docs`. You can try manually adding new channels or connections and see the response from database.
+You can check it using by going to `127.0.0.1:8000` in your browser. It has to return JSON with Ok row set to true. All possible API calls with descriptions could be seen on the `127.0.0.1:8000/docs`. You can try manually adding new channels or connections and see the response from database.
 
 ## 📖 Configs <a name="configs"></a>
 
