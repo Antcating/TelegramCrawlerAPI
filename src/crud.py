@@ -1,4 +1,4 @@
-import datetime, configparser
+import datetime, configparser, pytz
 from sqlalchemy.orm import Session
 
 from . import schemas
@@ -7,9 +7,10 @@ from . import models
 config = configparser.ConfigParser()
 config.sections()
 config.read("config.ini")
-date_str = config['API']['DATE']
+date_str = config["API"]["DATE"]
 
 DATE_BREAK = datetime.datetime.strptime(date_str, "%d/%m/%Y")
+DATE_BREAK = DATE_BREAK.replace(tzinfo=pytz.UTC)
 
 def get_channel_by_id(db: Session, channel_id: int):
     return (
