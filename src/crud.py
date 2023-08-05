@@ -218,6 +218,9 @@ def add_to_queue(db: Session, queue_element: schemas.QueueCreate):
     db_in_queue = get_from_queue(db, queue_element.id)
     if db_in_queue:
         return None
+    db_in_connections = [get_channel_connections_out(db, queue_element.id, 0), get_channel_connections_out(db, queue_element.id, 0)]
+    if any(db_in_connections):
+        return None
     db_queue = models.TelegramQueue(**queue_element.model_dump())
     db.add(db_queue)
     db.commit()

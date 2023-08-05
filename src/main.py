@@ -384,7 +384,7 @@ def add_to_queue(queue_element: schemas.QueueCreate, db: Session = Depends(get_d
     db_queue = crud.add_to_queue(db, queue_element)
     if db_queue is None:
         raise HTTPException(
-            status_code=403, detail="This channel is already in the queue!"
+            status_code=403, detail="This channel is already in the queue or already parsed before!"
         )
     return db_queue
 
