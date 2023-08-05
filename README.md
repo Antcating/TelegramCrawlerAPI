@@ -12,6 +12,7 @@
 - [Getting Started](#getting_started)
 - [Usage](#usage)
 - [Configs](#configs)
+- [ToDo](#todo)
 - [Built Using](#built_using)
 - [Authors](#authors)
 
@@ -62,6 +63,11 @@ There are several places where you can change some configs of the project.
 - In `docker-compose.yml` you can change your Postgres username (POSTGRES_USER), password (POSTGRES_PASSWORD) and name of the database (POSTGRES_DB). **If you change any of this rows, you have to update `config.ini` file with updated data using the pattern shown in `config.ini` file**
 - `config.ini` also contains row named `DATE`. This row is used to analyze connections before and after specific `DATE`. For example, my use-case: analyzing connections between channel before and after beginning of full-blown russian invasion in Ukraine. You can set this DATE to whatever you want and it will reflect in `TelegramConnections` table. All connections before the break would have `0` in the `type` column of the table and all connections after the break would have `1`. 
 If you want to disable this feature - set the `DATE` to `1/1/1970`, so that all the connections would be considered and after the break and their `type` column would always be set to `1`.
+
+## ToDo <a name="todo"></a>
+
+- Write wiki for CRUD
+- Write front-end for the Database using API 
 
 ## ⛏️ Built Using <a name = "built_using"></a>
 
