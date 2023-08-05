@@ -1,10 +1,15 @@
-import datetime
+import datetime, configparser
 from sqlalchemy.orm import Session
 
 from . import schemas
 from . import models
-from .constants import DATE_BREAK
 
+config = configparser.ConfigParser()
+config.sections()
+config.read("config.ini")
+date_str = config['API']['DATE']
+
+DATE_BREAK = datetime.datetime.strptime(date_str, "%d/%m/%Y")
 
 def get_channel_by_id(db: Session, channel_id: int):
     return (
@@ -107,19 +112,23 @@ def update_connection(db: Session, id_origin: int, id_destination: int, date: st
         type = 0
     elif date >= DATE_BREAK:
         type = 1
-    
+
     db_connection = get_connection(db, id_origin, id_destination, type)
     if db_connection is None:
         return None
-    db_connection = db.query(models.TelegramConnection).filter_by(
-        id_origin=id_origin, id_destination=id_destination, type=type
-    ).update(
-        {
-            models.TelegramConnection.strength: models.TelegramConnection.strength + 1,
-        }
+    db_connection = (
+        db.query(models.TelegramConnection)
+        .filter_by(id_origin=id_origin, id_destination=id_destination, type=type)
+        .update(
+            {
+                models.TelegramConnection.strength: models.TelegramConnection.strength
+                + 1,
+            }
+        )
     )
     db.commit()
     return schemas.Success(ok=True)
+
 
 def get_connection(db: Session, id_origin: int, id_destination: int, type: int):
     return (
@@ -131,6 +140,7 @@ def get_connection(db: Session, id_origin: int, id_destination: int, type: int):
         )
         .first()
     )
+
 
 def get_connection_by_date(db: Session, id_origin: int, id_destination: int, date: str):
     date = datetime.datetime.fromisoformat(date)
@@ -176,6 +186,7 @@ def delete_connection(db: Session, id_origin: int, id_destination: int):
     ).delete()
     db.commit()
     return schemas.Success(ok=True)
+
 
 def delete_connections(db: Session, id_origin: int):
     db.query(models.TelegramConnection).filter(
