@@ -7,11 +7,7 @@ class Channel(BaseModel):
     username: str
     title: str
     date: datetime.datetime
-
-    # @validator(date, pre=True)
-    # def date_validate(cls, date):
-    #     return datetime.datetime.fro
-
+    
 
 class ConnectionBase(BaseModel):
     id_origin: int
